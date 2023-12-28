@@ -9,9 +9,11 @@ from openai import OpenAI, APIConnectionError
 
 def write_csv_row(strings):
     writer = csv.writer(
-        sys.stdout, delimiter="|"
+        sys.stdout, delimiter="\t"
     )
     writer.writerow(strings)
+    # flush stdout to prevent buffering
+    sys.stdout.flush()
 
 
 # Get OpenAI API key from environment variable
@@ -21,32 +23,44 @@ if not api_key:
         "OpenAI API key not found. Please set the OPENAI_API_KEY environment variable."
     )
 
-client = OpenAI(api_key=api_key, timeout=60)
+client = OpenAI(api_key=api_key, timeout=600)
 
 
 @retry(APIConnectionError, tries=3, delay=5, backoff=2)
 def generate(topic):
     completion = client.chat.completions.create(
         model="gpt-4",
+        timeout=600,
+
         messages=[
             {
                 "role": "system",
-                "content": f"""Generate a very unique, simple, and intelligent Spanish phrase about the topic: "{topic}"  and its English translation. Pick 1 of the top 1000 frequent Spanish words to include in the phrase. 
+                "content": f"""
+Generate a unique, simple, and intelligent Spanish phrase on the topic: "{topic}" along with its English translation. Ensure that the phrase includes at least one of the top 1000 frequent Spanish words.
 
-For each important spanish part of speech make one single concise line. Must include spanish root verb if needed. Masc or fem. And basic etymology"
+For each significant Spanish word in the phrase, provide a single sentence description that includes:
+- Part of Speech (e.g., noun, verb, adjective)
+- Gender (masculine or feminine) for nouns and adjectives, if applicable
+- Definition of the Spanish word
+- Root Verb, if applicable
+- Minimal etymology, if applicable
+
+The response should be concise, educational, and focus primarily on the Spanish word's meaning and usage.
 
 ==Begin Example==
-I always eat before sleeping
-Siempre como antes de dormir
+I always eat before sleeping.
+Siempre como antes de dormir.
 
-**Siempre**: Adverb, Latin "semper," meaning "always" or "ever."
+**Siempre**: Adverb; meaning "always" or "ever"; from Latin "semper."
 
-**como**: Verb, 1st person singular, Latin "quomodo," which translates to "in what manner" or "how.
+**Como**: Verb, 1st person singular present; meaning "I eat"; root "Comer," from Latin "comedere."
 
-**antes de**: Preposition, from Latin "ante," meaning "before") and "de" (from Latin "de," a preposition indicating origin, separation, or derivation
+**Antes de**: Preposition; meaning "before"; combination of "Antes" (from Latin "ante") and "de" (from Latin "de," indicating origin, separation, or derivation).
 
-**dormir**: Verb, Latin "dormire," which also means "to sleep.
+**Dormir**: Verb; meaning "to sleep"; from Latin "dormire."
 ==End Example==
+
+Include the Spanish root if applicable, specify gender for gendered words, and add interesting etymological details about the word. Avoid including etymology for overly simple words like "y" (and) or "el" (the), or common verbs like "ser" (to be) or "tener" (to have).
 """,
             },
             {

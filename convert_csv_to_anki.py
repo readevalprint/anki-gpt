@@ -1,5 +1,6 @@
 import argparse
 import csv
+import random
 
 import genanki
 import markdown
@@ -7,33 +8,40 @@ import markdown
 
 def create_anki_deck(input_csv, deck_name, output_file):
     # Create a new Anki deck
-    deck = genanki.Deck(2059400110, deck_name)  # Randomly generated deck ID
+    deck = genanki.Deck(89928173198734231, deck_name)  # Randomly generated deck ID
 
     # Define a model (card type)
     my_model = genanki.Model(
-        1607392319,  # Randomly generated model ID
+        int(hashlib.sha1(deck_name.encode()).hexdigest(), 16),
         "Simple Model",
         fields=[{"name": "English"}, {"name": "Spanish"}, {"name": "Note"}],
         templates=[
             {
-                "name": "Card 1",
+                "name": "English to Spanish",
                 "qfmt": "{{English}}",  # Front of card
                 "afmt": '{{FrontSide}}<hr id="answer">{{Spanish}}<hr>{{Note}}',  # Back of card
+            },
+            {
+                "name": "Spanish to English",
+                "qfmt": "{{Spanish}}",  # Front of card
+                "afmt": '{{FrontSide}}<hr id="answer">{{English}}<hr>{{Note}}',  # Back of card
             },
         ],
     )
 
     # Read the CSV and add notes to the deck
     with open(input_csv, "r", encoding="utf-8") as file:
-        reader = csv.reader(file, delimiter="|")
+        reader = csv.reader(file, delimiter="\t")
         for row in reader:
             english = row[0]
             spanish = row[1]
             card_note = row[2]
 
+            print(english)
+            print(spanish)
+            print(card_note)
             # convert the card_note from mardown to html
             card_note = markdown.markdown(card_note, extensions=["def_list"])
-            print(card_note)
 
             note = genanki.Note(model=my_model, fields=[english, spanish, card_note])
             deck.add_note(note)
