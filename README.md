@@ -27,11 +27,10 @@ Spanish: Es esencial empezar el día temprano para el trabajo en la granja.
 **Granja**: Noun, Feminine; meaning "farm." Originates from the word "gran", indicating large, and traditionally referred to a grand house or a villa. Over time it evolved to mean a farm — an extensive piece of land used for growing crops or raising animals."
 ```
 
-## Convert to a Deck
+## Rebuild all decks
 
-Convert to an Anki deck, the note is converted from markdown to html.
-
+This will concat all CSVs grouped by level (A1, A2, B1...) and then generate Anki decks for each level.
 ```
-python convert_csv_to_anki.py ./spanish-lessons/B2-farming-conversations.csv "Farm work conversation (level B1)"  ./spanish-lessons/B2-farming-conversations.apkg
+python convert_csv_to_anki.py
 ```
 
