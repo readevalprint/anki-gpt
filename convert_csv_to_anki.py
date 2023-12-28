@@ -3,7 +3,6 @@ import csv
 import glob
 import hashlib
 import os
-import random
 
 import genanki
 import markdown
@@ -53,14 +52,14 @@ def create_anki_deck(input_csv, deck_name, output_file):
     genanki.Package(deck).write_to_file(output_file)
 
 
-def concatenate_and_convert_to_anki(levels):
+def concatenate_and_convert_to_anki(levels, directory):
     for level in levels:
-        print(f"Processing level {level}")
+        print(f"Processing {directory} - {level}")
         # Create or open the file for the current level
-        with open(f"spanish-lessons/{level}.csv", "w") as outfile:
+        with open(f"{directory}/{level}.csv", "w") as outfile:
             print(f"Creating {level}.csv")  
             # Find all .csv files for the current level
-            for filename in glob.glob(f"learn-spanis/h{level}-*.csv"):
+            for filename in glob.glob(f"{directory}/{level}-*.csv"):
                 print(f"Processing {filename}")
                 if os.path.isfile(filename):
                     # Read the contents of the file and append it to the level file
@@ -70,9 +69,9 @@ def concatenate_and_convert_to_anki(levels):
         # After concatenation, convert the CSV to Anki package
 
         create_anki_deck(
-            f"spanish-lessons/{level}.csv",
-            f"Spanish {level}",
-            f"spanish-lessons/{level}.csv",
+            f"{directory}/{level}.csv",
+            f"{directory} {level}",
+            f"{directory}/{level}.apkg",
         )
 
 
@@ -81,6 +80,17 @@ levels = ["A1", "A2", "B1", "B2", "C1", "C2"]
 
 
 if __name__ == "__main__":
-    concatenate_and_convert_to_anki(levels)
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+            "-d",
+            "--dir",
+            help="Directory containing the CSV files to convert, default is learn-spanish",
+            default="spanish-lessons",
+        )
+    args = parser.parse_args()
+
+
+
+    concatenate_and_convert_to_anki(levels, args.dir)
 
 

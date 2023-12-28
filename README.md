@@ -5,7 +5,7 @@
 In this case 5 examples will be saved to a tab sperated CSV
 
 ```
-python generate.py -t "Farm work conversation (level B1)" -s 5 >> ./spanish-lessons/B2-farming-conversations.csv
+python generate.py --language Spanish --topic "Farm work conversation (level B1)" -s 5 >> ./spanish-lessons/B2-farming-conversations.csv
 ```
 
 ### Example
@@ -31,6 +31,7 @@ Spanish: Es esencial empezar el día temprano para el trabajo en la granja.
 
 This will concat all CSVs grouped by level (A1, A2, B1...) and then generate Anki decks for each level.
 ```
+<<<<<<< HEAD
 python convert_csv_to_anki.py
 ```
 
