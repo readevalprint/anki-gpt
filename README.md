@@ -1,8 +1,8 @@
 # Usage
 
-## Generate exampls
+## Generate example phrases
 
-In this case 5 examples to tab sperated CSV
+In this case 5 examples will be saved to a tab sperated CSV
 
 ```
 python generate.py -t "Farm work conversation (level B1)" -s 5 >> ./spanish-lessons/B2-farming-conversations.csv
