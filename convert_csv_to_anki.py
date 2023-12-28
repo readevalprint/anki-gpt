@@ -1,5 +1,8 @@
 import argparse
 import csv
+import glob
+import hashlib
+import os
 import random
 
 import genanki
@@ -12,7 +15,7 @@ def create_anki_deck(input_csv, deck_name, output_file):
 
     # Define a model (card type)
     my_model = genanki.Model(
-        int(hashlib.sha1(deck_name.encode()).hexdigest(), 16),
+        int(hashlib.sha1(deck_name.encode()).hexdigest()[:5], 16),
         "Simple Model",
         fields=[{"name": "English"}, {"name": "Spanish"}, {"name": "Note"}],
         templates=[
@@ -50,12 +53,34 @@ def create_anki_deck(input_csv, deck_name, output_file):
     genanki.Package(deck).write_to_file(output_file)
 
 
+def concatenate_and_convert_to_anki(levels):
+    for level in levels:
+        print(f"Processing level {level}")
+        # Create or open the file for the current level
+        with open(f"spanish-lessons/{level}.csv", "w") as outfile:
+            print(f"Creating {level}.csv")  
+            # Find all .csv files for the current level
+            for filename in glob.glob(f"learn-spanis/h{level}-*.csv"):
+                print(f"Processing {filename}")
+                if os.path.isfile(filename):
+                    # Read the contents of the file and append it to the level file
+                    with open(filename, "r") as infile:
+                        outfile.write(infile.read())
+
+        # After concatenation, convert the CSV to Anki package
+
+        create_anki_deck(
+            f"spanish-lessons/{level}.csv",
+            f"Spanish {level}",
+            f"spanish-lessons/{level}.csv",
+        )
+
+
+# Define the levels
+levels = ["A1", "A2", "B1", "B2", "C1", "C2"]
+
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Convert CSV to Anki Deck")
-    parser.add_argument("input_csv", help="Input CSV file path")
-    parser.add_argument("deck_name", help="Name of the Anki deck")
-    parser.add_argument("output_file", help="Output Anki deck file path (.apkg)")
+    concatenate_and_convert_to_anki(levels)
 
-    args = parser.parse_args()
 
-    create_anki_deck(args.input_csv, args.deck_name, args.output_file)
