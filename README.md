@@ -31,7 +31,6 @@ Spanish: Es esencial empezar el día temprano para el trabajo en la granja.
 
 This will concat all CSVs grouped by level (A1, A2, B1...) and then generate Anki decks for each level.
 ```
-<<<<<<< HEAD
-python convert_csv_to_anki.py
+python convert_csv_to_anki.py --dir ./spanish-lessons/
 ```
 

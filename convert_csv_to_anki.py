@@ -56,10 +56,14 @@ def concatenate_and_convert_to_anki(levels, directory):
     for level in levels:
         print(f"Processing {directory} - {level}")
         # Create or open the file for the current level
+        filenames = glob.glob(f"{directory}/{level}-*.csv")
+        if len(filenames) == 0:
+            print(f"No files found for {level}")
+            continue
         with open(f"{directory}/{level}.csv", "w") as outfile:
             print(f"Creating {level}.csv")  
             # Find all .csv files for the current level
-            for filename in glob.glob(f"{directory}/{level}-*.csv"):
+            for filename in filenames:
                 print(f"Processing {filename}")
                 if os.path.isfile(filename):
                     # Read the contents of the file and append it to the level file
