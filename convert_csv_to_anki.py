@@ -35,18 +35,19 @@ def create_anki_deck(input_csv, deck_name, output_file):
     with open(input_csv, "r", encoding="utf-8") as file:
         reader = csv.reader(file, delimiter="\t")
         for row in reader:
-            english = row[0]
-            spanish = row[1]
-            card_note = row[2]
+            try:
+                english = row[0]
+                spanish = row[1]
+                card_note = row[2]
 
-            print(english)
-            print(spanish)
-            print(card_note)
-            # convert the card_note from mardown to html
-            card_note = markdown.markdown(card_note, extensions=["def_list"])
+                # convert the card_note from mardown to html
+                card_note = markdown.markdown(card_note, extensions=["def_list"])
 
-            note = genanki.Note(model=my_model, fields=[english, spanish, card_note])
-            deck.add_note(note)
+                note = genanki.Note(model=my_model, fields=[english, spanish, card_note])
+                deck.add_note(note)
+            except IndexError:
+                print(f"Skipping row {row}")
+
 
     # Save the deck to a file
     genanki.Package(deck).write_to_file(output_file)

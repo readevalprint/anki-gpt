@@ -6,7 +6,6 @@ from retry import retry
 
 from openai import OpenAI, APIConnectionError
 
-
 def write_csv_row(strings):
     writer = csv.writer(
         sys.stdout, delimiter="\t"
@@ -36,7 +35,7 @@ def generate(topic, language_1):
             {
                 "role": "system",
                 "content": f"""
-Generate a unique, intellegent {language_1} phrase on the topic: "{topic}" along with its English translation. Ensure that the phrase includes at least one of the top 1000 frequent {language_1} words.
+Generate a short, unique, random {language_1} about {topic} along with its English translation. Ensure that the phrase includes at least 2 of the top 1000 frequent {language_1} words.
 
 For each significant {language_1} word in the phrase, provide a single sentence description that includes:
 - Part of Speech (e.g., noun, verb, adjective)
